@@ -1,18 +1,24 @@
 import json
+import re
+import uuid
 import boto3
 import os
 import logging
 import bcrypt
+import jwt
+from boto3.dynamodb.conditions import Key, Attr
+import time
 
 s3_client = boto3.client('s3')
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 dynamodb = boto3.resource('dynamodb')
-dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
+table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
+
 
 def hash_password(password):
-    if len(password) < 8 or bool(re.search(r'[!@#$%^&*(),.?":{}|<>]', password)):
+    if len(password) < 8 or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
         raise ValueError("Password must be at least 8 characters long and contain special characters")
     
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
@@ -33,7 +39,7 @@ def generate_jwt(user_id, username):
 
 def signup(event, context):
     try:
-        body = json.load(event['body'])
+        body = json.loads(event['body'])
         username = body.get('username')
         password = body.get('password')
         first_name = body.get('first_name')
@@ -41,7 +47,7 @@ def signup(event, context):
 
         if not username or not password or not first_name or not last_name: 
             return {
-                'statusCode': 400,
+                'statusCode': 401,
                 'body': json.dumps({'error': 'Missing Required Fields'})
             }
         
@@ -57,10 +63,11 @@ def signup(event, context):
             'last_name': last_name
         }
 
-        dynamodb.put_item(
+        table.put_item(
             Item={
             'PK': 'USER#' + user_id,
             'SK': 'PROFILE',
+            'user_id': user_id,
             'username': username,
             'hashed_password': hashed_password,
             'first_name': first_name,
@@ -70,6 +77,11 @@ def signup(event, context):
 
         return{
             'statusCode': 201,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+            }, 
             'body': json.dumps({
                 'message': 'User created sucessfully',
                 'user_id': user_id,
@@ -85,15 +97,15 @@ def signup(event, context):
     
 def login(event, context):
     try:
-        body = json.load(even['body'])
+        body = json.loads(event['body'])
         username = body.get('username')
         password = body.get('password')
         if not username or not password:
             return {
-                'statusCode': 400,
+                'statusCode': 401,
                 'body': json.dumps({'error': 'Missing Required Fields'})
             }
-        response = dynamodb.query(
+        response = table.query(
             IndexName = 'UsernameIndex',
             KeyConditionExpression = Key('username').eq(username),
             FilterExpression = Attr('SK').begins_with('PROFILE')
