@@ -15,6 +15,8 @@ yarn-error.log*
 # dotenv environment files
 .env
 .env.*
+.venv/
+venv/
 
 # OS-specific
 .DS_Store
@@ -30,6 +32,7 @@ override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
+*.tfvars
 
 # Python (if using for Lambda)
 __pycache__/

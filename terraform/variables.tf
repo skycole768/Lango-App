@@ -15,7 +15,7 @@ variable "lambda_runtime" {
 variable "lambda_source_folder" {
   description = "Path to the folder containing zipped Lambda function files"
   type        = string
-  default     = "lambdas"
+  default     = "../backend/lambdas/zip"
 }
 
 # API Gateway settings
@@ -36,4 +36,10 @@ variable "dynamodb_table_name" {
   description = "Name of the DynamoDB table for flashcard data"
   type        = string
   default     = "LangoAppTable"
+}
+
+variable "jwt_secret" {
+  description = "Secret key to sign JWT tokens"
+  type        = string
+  sensitive   = true
 }

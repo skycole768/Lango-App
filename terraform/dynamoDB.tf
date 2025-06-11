@@ -15,6 +15,17 @@ resource "aws_dynamodb_table" "lango_table" {
         type = "S"
     }
 
+    attribute {
+        name = "username"
+        type = "S"
+    }
+
+    global_secondary_index {
+        name            = "UsernameIndex"
+        hash_key        = "username"
+        projection_type = "ALL"
+    }
+
     tags = {
         Name        = var.dynamodb_table_name
         Environment = var.stage_name
