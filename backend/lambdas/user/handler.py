@@ -190,8 +190,8 @@ def delete_user(event, context):
             key = {
                 'PK': 'USER#' + user_id,
                 'SK': 'PROFILE'
-        }
-        ConditionExpression = "attribute_exists(PK) AND attribute_exists(SK)"
+        },
+        ConditionExpression = "attribute_exists(PK) AND attribute_exists(SK)",
         ReturnValues="ALL_OLD"
         )
 
