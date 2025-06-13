@@ -20,6 +20,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
   name = "lango-lambda-policy"
   role = aws_iam_role.lambda_exec_role.id
 
+  
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -33,7 +34,10 @@ resource "aws_iam_role_policy" "lambda_policy" {
           "dynamodb:Scan",
           "dynamodb:Query"
         ]
-        Resource = "${aws_dynamodb_table.lango_table.arn}"
+        Resource = [
+          "${aws_dynamodb_table.lango_table.arn}",
+          "${aws_dynamodb_table.lango_table.arn}/index/UsernameIndex"
+        ]
       }
     ]
   })

@@ -38,30 +38,40 @@ def generate_jwt(user_id, username):
     return token
 
 def signup(event, context):
+    logger.info("Starting signup handler")
+
     try:
         body = json.loads(event['body'])
+        logger.info(f"Received body")
+        
         username = body.get('username')
         password = body.get('password')
         first_name = body.get('first_name')
         last_name = body.get('last_name')
+        preferred_language = body.get('preferred_language')
+        logger.info(f"processed body")
 
-        if not username or not password or not first_name or not last_name: 
+        if not username or not password or not first_name or not last_name or not preferred_language: 
             return {
                 'statusCode': 401,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                    'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+                },
                 'body': json.dumps({'error': 'Missing Required Fields'})
             }
         
+        
+        logger.info("Attempting to hash password")
         hashed_password = hash_password(password)
+        logger.info("Password hashed successfully")
+        
+        logger.info("Hashed password, generating user ID")
         user_id = generate_user_id()
         jwt_token = generate_jwt(user_id, username)
 
-        user_data = {
-            'user_id': user_id,
-            'username': username,
-            'hashed_password': hashed_password,
-            'first_name': first_name,
-            'last_name': last_name
-        }
+        logger.info("Writing user to DynamoDB")
 
         table.put_item(
             Item={
@@ -71,7 +81,10 @@ def signup(event, context):
             'username': username,
             'hashed_password': hashed_password,
             'first_name': first_name,
-            'last_name': last_name
+            'last_name': last_name,
+            'preferred_language': preferred_language,
+            'created_at': int(time.time()),
+            'last_login': int(time.time())
             }
         )
 
@@ -92,44 +105,80 @@ def signup(event, context):
         logger.error(f"Error in signup: {str(e)}")
         return {
             'statusCode': 500,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+            },
             'body': json.dumps({'error': 'Internal Server Error'})
         }
     
 def login(event, context):
+    logger.info("Starting login handler")
     try:
         body = json.loads(event['body'])
+        logger.info(f"Received body for login")
         username = body.get('username')
         password = body.get('password')
+        logger.info(f"Processed body for login")
         if not username or not password:
             return {
                 'statusCode': 401,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                    'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+                },
                 'body': json.dumps({'error': 'Missing Required Fields'})
             }
+        logger.info("Querying DynamoDB for user")
         response = table.query(
             IndexName = 'UsernameIndex',
             KeyConditionExpression = Key('username').eq(username),
             FilterExpression = Attr('SK').begins_with('PROFILE')
         )
+        logger.info(f"Query response")
 
         if not response['Items']:
+            logger.warning(f"User not found for username: {username}")
             return {
                 'statusCode': 404,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                    'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+                },
                 'body': json.dumps({'error': 'Invalid Username'})
             }
         
         user_item = response['Items'][0]
         hashed_password = user_item['hashed_password']
+        logger.info("Checking password")
         if not bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8')):
+            logger.warning(f"Invalid password for username: {username}")
             return {
                 'statusCode': 401,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                    'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+                },
                 'body': json.dumps({'error': 'Invalid Password'})
             }
         
+        logger.info("Password verified, generating JWT")
+        
         user_id = user_item["user_id"]
         jwt_token = generate_jwt(user_id, username)
+        logger.info("JWT generated successfully")
 
         return {
             'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+            },
             'body': json.dumps({
                 'message': "Login Sucessful",
                 'user_id': user_id,
@@ -140,5 +189,10 @@ def login(event, context):
         logger.error(f"Error in login: {str(e)}")
         return {
             'statusCode': 500,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+            },
             'body': json.dumps({'error': 'Internal Server Error'})
         }

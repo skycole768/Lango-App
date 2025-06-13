@@ -61,19 +61,19 @@ locals {
     # }
 
     
-    # delete_user = {
-    #   zip     = "user.zip"
-    #   handler = "handler.delete_user"
-    # }
+    delete_user = {
+      zip     = "user.zip"
+      handler = "handler.delete_user"
+    }
 
-    # edit_user = {
-    #   zip     = "user.zip"
-    #   handler = "handler.edit_user"
-    # }
-    # get_user = {
-    #   zip     = "user.zip"
-    #   handler = "handler.get_user"
-    # }
+    edit_user = {
+      zip     = "user.zip"
+      handler = "handler.edit_user"
+    }
+    get_user = {
+      zip     = "user.zip"
+      handler = "handler.get_user"
+    }
 
     signup = {
       zip     = "auth.zip"
@@ -94,6 +94,7 @@ resource "aws_lambda_function" "lango_functions" {
   handler       = each.value.handler
   runtime       = var.lambda_runtime
   filename      = "${var.lambda_source_folder}/${each.value.zip}"
+  timeout       = 10
 
   environment {
     variables = {

@@ -29,11 +29,9 @@ locals {
     # getLanguage     = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_language"]}
     # deleteLanguage   = { method = "DELETE",  lambda = aws_lambda_function.lango_functions["delete_language"]}
 
-    # addUser          = { method = "POST",    lambda = aws_lambda_function.lango_functions["add_user"]}
-    # deleteUser       = { method = "DELETE",  lambda = aws_lambda_function.lango_functions["delete_user"]}
-
-    # editUser      = { method = "PUT",     lambda = aws_lambda_function.lango_functions["edit_user"]}
-    # getUser       = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_user"]}
+    deleteUser       = { method = "DELETE",  lambda = aws_lambda_function.lango_functions["delete_user"]}
+    editUser      = { method = "PUT",     lambda = aws_lambda_function.lango_functions["edit_user"]}
+    getUser       = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_user"]}
 
     signup = { method = "POST", lambda = aws_lambda_function.lango_functions["signup"]}
     login  = { method = "POST", lambda = aws_lambda_function.lango_functions["login"]}
