@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Lambda directories to process
-dirs=(auth set user language flashcard)
+dirs=(flashcard)
 
 # Output directory for zip files
 output_dir="zip"

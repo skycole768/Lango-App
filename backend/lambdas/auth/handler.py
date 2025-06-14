@@ -1,8 +1,8 @@
 import json
-import re
 import uuid
 import boto3
 import os
+import re
 import logging
 import bcrypt
 import jwt
@@ -42,6 +42,18 @@ def signup(event, context):
 
     try:
         body = json.loads(event['body'])
+
+        if not body:
+            return {
+                'statusCode': 400,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                    'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+                },
+                'body': json.dumps({'error': 'Request body is required'})
+            }
+        
         logger.info(f"Received body")
         
         username = body.get('username')
@@ -117,6 +129,17 @@ def login(event, context):
     logger.info("Starting login handler")
     try:
         body = json.loads(event['body'])
+        if not body:
+            return {
+                'statusCode': 400,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                    'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+                },
+                'body': json.dumps({'error': 'Request body is required'})
+            }
+        
         logger.info(f"Received body for login")
         username = body.get('username')
         password = body.get('password')
@@ -172,6 +195,20 @@ def login(event, context):
         jwt_token = generate_jwt(user_id, username)
         logger.info("JWT generated successfully")
 
+        logger.info("Updating last login time")
+        table.update_item(
+            Key={
+                'PK': 'USER#' + user_id,
+                'SK': 'PROFILE'
+            },
+            UpdateExpression='SET last_login = :ll',
+            ExpressionAttributeValues={
+                ':ll': int(time.time())
+            }
+        )
+
+        logger.info("Last login time updated successfully")
+
         return {
             'statusCode': 200,
             'headers': {
@@ -183,7 +220,7 @@ def login(event, context):
                 'message': "Login Sucessful",
                 'user_id': user_id,
                 'token': jwt_token
-            })
+            },default=str)
         }
     except Exception as e:
         logger.error(f"Error in login: {str(e)}")

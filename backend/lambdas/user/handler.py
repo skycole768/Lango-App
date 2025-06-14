@@ -2,7 +2,8 @@ import json
 import boto3
 import os
 import logging
-from boto3.dynamodb.conditions import Key, Attr
+import re 
+import bcrypt
 
 s3_client = boto3.client('s3')
 logger = logging.getLogger()
@@ -11,11 +12,19 @@ logger.setLevel(logging.INFO)
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
 
+def hash_password(password):
+    if len(password) < 8 or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        raise ValueError("Password must be at least 8 characters long and contain special characters")
+    
+    hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    return hashed.decode('utf-8')
+
+
 def get_user(event, context):
     logger.info("starting get_user handler")
 
     try:
-        user_id = event['pathParameters']['user_id']
+        user_id = event['queryStringParameters']['user_id']
         logger.info(f"Received user_id: {user_id}")
 
         if not user_id:
@@ -28,6 +37,8 @@ def get_user(event, context):
                 },
                 'body': json.dumps({'error': 'User ID is required'})
             }
+
+        logger.info(f"Attempting to retrieve user with ID: {user_id}")
         
         response = table.get_item(
             Key={
@@ -36,7 +47,9 @@ def get_user(event, context):
             }
         )
 
-        if not response['Items']:
+        logger.info(f"Retrieved response")
+
+        if 'Item' not in response:
             return {
                 'statusCode': 404,
                 'headers': {
@@ -47,11 +60,18 @@ def get_user(event, context):
                 'body': json.dumps({'error': 'User not found'})
             }
         
-        user_data = response['items'][0]
-        logger.info(f"User data retrieved: {user_data}")
+        user_data = response['Item']
         user_data.pop('hashed_password', None)
         user_data.pop('SK', None)
         user_data.pop('PK', None)
+        logger.info(f"User data retrieved: {user_data}")
+
+        username = user_data.get('username')
+        preferred_language = user_data.get('preferred_language')
+        first_name = user_data.get('first_name')
+        last_name = user_data.get('last_name')
+        created_at = user_data.get('created_at')
+        last_login = user_data.get('last_login')
 
         return {
             'statusCode': 200,
@@ -60,7 +80,13 @@ def get_user(event, context):
                 'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
                 'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
             },
-            'body': json.dumps(user_data)
+            'body': json.dumps({'username': username,
+                                'preferred_language': preferred_language,
+                                'first_name': first_name,
+                                'last_name': last_name,
+                                'created_at': created_at,
+                                'last_login': last_login}, 
+                                default=str)
         }
     except Exception as e:
         logger.error(f'Error in get_user: {str(e)}')
@@ -81,7 +107,7 @@ def edit_user(event, context):
         body = json.loads(event['body'])
         logger.info(f"Received body for edit_user")
 
-        user_id = event['pathParameters']['user_id']
+        user_id = event['queryStringParameters']['user_id']
         logger.info(f"Received user_id: {user_id}")
         if not user_id:
             return {
@@ -143,6 +169,20 @@ def edit_user(event, context):
         )
         updated_attributes = response.get('Attributes', {})
 
+        if 'Attributes' not in response:
+            logger.warning(f"User with ID {user_id} not found")
+            return {
+                'statusCode': 404,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                    'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+                },
+                'body': json.dumps({'error': 'Set not found'})
+            }
+
+        updated_attributes.pop('hashed_password', None)
+
         logger.info(f"User updated successfully: {response}")
         return {
             'statusCode': 200,
@@ -154,7 +194,7 @@ def edit_user(event, context):
             'body': json.dumps({
                 'message': 'User updated successfully',
                 'updated_attributes': updated_attributes
-            })
+            }, default=str)
         }
     except Exception as e:
         logger.error(f'Error in edit_user: {str(e)}')
@@ -171,7 +211,7 @@ def edit_user(event, context):
 def delete_user(event, context):        
     logger.info("starting delete_user handler")
     try:
-        user_id = event['pathParameters']['user_id']
+        user_id = event['queryStringParameters']['user_id']
         logger.info(f"Recieved user_id: {user_id}")
         if not user_id:
             return {
@@ -187,7 +227,7 @@ def delete_user(event, context):
         logger.info(f"Attempting to delete user with ID: {user_id}")
 
         response = table.delete_item(
-            key = {
+            Key = {
                 'PK': 'USER#' + user_id,
                 'SK': 'PROFILE'
         },
@@ -197,6 +237,10 @@ def delete_user(event, context):
 
         deleted_attributes = response.get('Attributes', {})
         logger.info(f"User deleted successfully: {response}")
+
+        deleted_attributes.pop('hashed_password', None)
+        deleted_attributes.pop('SK', None)
+        deleted_attributes.pop('PK', None)
 
         return {
             'statusCode': 200,
@@ -208,7 +252,7 @@ def delete_user(event, context):
             'body': json.dumps({
                 'message': 'User deleted successfully',
                 'deleted_attributes': deleted_attributes
-            })
+            }, default=str)
         }
     except Exception as e:
         logger.error(f'Error in delete_user: {str(e)}')

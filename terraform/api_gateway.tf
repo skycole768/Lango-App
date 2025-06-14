@@ -12,22 +12,21 @@ resource "aws_apigatewayv2_api" "lango_api" {
 
 locals {
   lango_endpoints = {
-    # addFlashcard     = { method = "POST",    lambda = aws_lambda_function.lango_functions["add_flashcard"] }
-    # editFlashcard    = { method = "PUT",     lambda = aws_lambda_function.lango_functions["edit_flashcard"]}
-    # deleteFlashcard  = { method = "DELETE",  lambda = aws_lambda_function.lango_functions["delete_flashcard"]}
-    # getFlashcards    = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_flashcards"]}
-    # getFlashcard     = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_flashcard"]}
+    addFlashcard     = { method = "POST",    lambda = aws_lambda_function.lango_functions["add_flashcard"] }
+    editFlashcard    = { method = "PUT",     lambda = aws_lambda_function.lango_functions["edit_flashcard"]}
+    deleteFlashcard  = { method = "DELETE",  lambda = aws_lambda_function.lango_functions["delete_flashcard"]}
+    getFlashcards    = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_flashcards"]}
+    getFlashcard     = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_flashcard"]}
 
-    # addSet           = { method = "POST",    lambda = aws_lambda_function.lango_functions["add_set"]}
-    # getSets          = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_sets"]}
-    # getSet           = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_set"]}
-    # editSet          = { method = "PUT",     lambda = aws_lambda_function.lango_functions["edit_set"]}
-    # deleteSet        = { method = "DELETE",  lambda = aws_lambda_function.lango_functions["delete_set"]}
+    addSet           = { method = "POST",    lambda = aws_lambda_function.lango_functions["add_set"]}
+    getSets          = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_sets"]}
+    getSet           = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_set"]}
+    editSet          = { method = "PUT",     lambda = aws_lambda_function.lango_functions["edit_set"]}
+    deleteSet        = { method = "DELETE",  lambda = aws_lambda_function.lango_functions["delete_set"]}
 
-    # addLanguage      = { method = "POST",    lambda = aws_lambda_function.lango_functions["add_language"]}
-    # getLanguages     = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_languages"]}
-    # getLanguage     = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_language"]}
-    # deleteLanguage   = { method = "DELETE",  lambda = aws_lambda_function.lango_functions["delete_language"]}
+    addLanguage      = { method = "POST",    lambda = aws_lambda_function.lango_functions["add_language"]}
+    getLanguages     = { method = "GET",     lambda = aws_lambda_function.lango_functions["get_languages"]}
+    deleteLanguage   = { method = "DELETE",  lambda = aws_lambda_function.lango_functions["delete_language"]}
 
     deleteUser       = { method = "DELETE",  lambda = aws_lambda_function.lango_functions["delete_user"]}
     editUser      = { method = "PUT",     lambda = aws_lambda_function.lango_functions["edit_user"]}
