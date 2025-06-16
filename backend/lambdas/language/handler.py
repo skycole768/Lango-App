@@ -2,7 +2,7 @@ import boto3
 import json
 import os
 import logging
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 
 s3_client = boto3.client('s3')
 logger = logging.getLogger()
@@ -175,15 +175,33 @@ def delete_language(event, context):
                 'body': json.dumps({'error': 'User ID and Language are required'})
             }
         
-        logger.info("Deleting language")
-        response = table.delete_item(
-            Key={
-                'PK': 'USER#' + user_id,
-                'SK': 'LANGUAGE#' + language
-            }
-        )
+        items_to_delete = []
 
-        logger.info(f"Language deleted successfully: {response}")
+        # 1. Find items where PK starts with USER#123#LANGUAGE#Korean
+        prefix = f"USER#{user_id}#LANGUAGE#{language}"
+        logger.info(f"Scanning for PK starting with {prefix}")
+        response1 = table.scan(
+            FilterExpression=Attr('PK').begins_with(prefix)
+        )
+        items_to_delete.extend(response1.get('Items', []))
+
+        # 2. Find items where PK = USER#123 AND SK = LANGUAGE#Korean
+        logger.info(f"Scanning for PK=USER#{user_id} and SK begins with LANGUAGE#{language}")
+        response2 = table.scan(
+            FilterExpression=Attr('PK').eq(f'USER#{user_id}') & Attr('SK').begins_with(f'LANGUAGE#{language}')
+        )
+        items_to_delete.extend(response2.get('Items', []))
+
+        logger.info(f"Total items to delete: {len(items_to_delete)}")
+
+        # Delete all matched items
+        for item in items_to_delete:
+            pk = item['PK']
+            sk = item['SK']
+            logger.info(f"Deleting item with PK={pk}, SK={sk}")
+            table.delete_item(Key={'PK': pk, 'SK': sk})
+
+        logger.info(f"Successfully deleted {len(items_to_delete)} items for language {language} of user {user_id}")
         return {
             'statusCode': 200,
             'headers': {
@@ -191,7 +209,9 @@ def delete_language(event, context):
                 'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
                 'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
             },
-            'body': json.dumps({'message': 'Language deleted successfully'})
+            'body': json.dumps({
+                'message': f"Deleted {len(items_to_delete)} items for language {language} of user {user_id}"
+            })
         }
     except Exception as e:
         logger.error(f'Error in delete_language: {str(e)}')

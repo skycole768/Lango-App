@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Lambda directories to process
-dirs=(flashcard)
+dirs=(set auth user language flashcard)
 
 # Output directory for zip files
-output_dir="zip"
+output_dir="lambdas/zip"
 
 mkdir -p "$output_dir"
 
@@ -14,7 +14,7 @@ yum install -y python39 python3-pip zip gcc
 for dir in "${dirs[@]}"; do
   echo "Processing $dir ..."
 
-  lambda_dir=$dir
+  lambda_dir="lambdas/${dir}"
   package_dir=$lambda_dir/package
 
   rm -rf "$package_dir"
@@ -29,7 +29,7 @@ for dir in "${dirs[@]}"; do
 
   cp "$lambda_dir"/*.py "$package_dir"/
 
-  (cd "$package_dir" && zip -r "../../$output_dir/$dir.zip" .)
+  (cd "$package_dir" && zip -r "$OLDPWD/$output_dir/$dir.zip" .)
 
   rm -rf "$package_dir"
 

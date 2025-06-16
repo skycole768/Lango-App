@@ -18,8 +18,8 @@ table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
 
 
 def hash_password(password):
-    if len(password) < 8 or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-        raise ValueError("Password must be at least 8 characters long and contain special characters")
+    if (len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'\d', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password)):
+        raise ValueError("Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character")
     
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     return hashed.decode('utf-8')
@@ -74,10 +74,44 @@ def signup(event, context):
                 'body': json.dumps({'error': 'Missing Required Fields'})
             }
         
+        username = username.lower()
         
-        logger.info("Attempting to hash password")
-        hashed_password = hash_password(password)
-        logger.info("Password hashed successfully")
+        logger.info(f"Check if user already exists")
+
+        response = table.query(
+        IndexName='UsernameIndex',
+        KeyConditionExpression=Key('username').eq(username),
+        FilterExpression = Attr('SK').begins_with('PROFILE')
+        )
+
+        if response['Items']:
+            return {
+                'statusCode': 409,  # Conflict
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                    'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+                },
+                'body': json.dumps({'error': 'Username already exists'})
+        }
+
+        
+        
+        try:
+            logger.info("Attempting to hash password")
+            hashed_password = hash_password(password)
+            logger.info("Password hashed successfully")
+        except ValueError as ve:
+            logger.warning(f"Invalid password: {str(ve)}")
+            return {
+                'statusCode': 400,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                    'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+                },
+                'body': json.dumps({'error': str(ve)})
+            }
         
         logger.info("Hashed password, generating user ID")
         user_id = generate_user_id()
@@ -154,6 +188,9 @@ def login(event, context):
                 },
                 'body': json.dumps({'error': 'Missing Required Fields'})
             }
+        
+        username = username.lower()
+        
         logger.info("Querying DynamoDB for user")
         response = table.query(
             IndexName = 'UsernameIndex',

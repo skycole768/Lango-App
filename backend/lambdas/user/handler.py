@@ -4,6 +4,7 @@ import os
 import logging
 import re 
 import bcrypt
+from boto3.dynamodb.conditions import Attr
 
 s3_client = boto3.client('s3')
 logger = logging.getLogger()
@@ -13,8 +14,8 @@ dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
 
 def hash_password(password):
-    if len(password) < 8 or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
-        raise ValueError("Password must be at least 8 characters long and contain special characters")
+    if (len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'\d', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password)):
+        raise ValueError("Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character")
     
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     return hashed.decode('utf-8')
@@ -101,6 +102,17 @@ def get_user(event, context):
         }
     
 def edit_user(event, context):
+    if event['requestContext']['http']['method'] == 'OPTIONS':
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                'Access-Control-Allow-Headers': '*',
+            },
+            'body': json.dumps({'message': 'CORS preflight response'})
+        }
+    
     logger.info("starting edit_user handler")
 
     try:
@@ -137,7 +149,7 @@ def edit_user(event, context):
         username = body.get('username')
         password = body.get('password')
 
-        if not first_name or not last_name or not preferred_language or not username or not password:
+        if not first_name or not last_name or not preferred_language or not username:
             return {
                 'statusCode': 400,
                 'headers': {
@@ -148,23 +160,45 @@ def edit_user(event, context):
                 'body': json.dumps({'error': 'All fields are required'})
             }
         
-        hashed_password = hash_password(password)
-        logger.info("Password hashed successfully")
+        username = username.lower()
+
+        hashed_password = None
+        if password:
+            try:
+                logger.info("Attempting to hash password")
+                hashed_password = hash_password(password)
+                logger.info("Password hashed successfully")
+            except ValueError as ve:
+                logger.warning(f"Invalid password: {str(ve)}")
+                return {
+                    'statusCode': 400,
+                    'headers': {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                        'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
+                    },
+                    'body': json.dumps({'error': str(ve)})
+                }
+            
+        update_expression = "set first_name=:f, last_name=:l, preferred_language=:p, username=:u"
+        expression_values = {
+            ':f': first_name,
+            ':l': last_name,
+            ':p': preferred_language,
+            ':u': username
+        }
+
+        if hashed_password:
+            update_expression += ", hashed_password=:hp"
+            expression_values[':hp'] = hashed_password
 
         response = table.update_item(
             Key={
                 'PK': 'USER#' + user_id,
                 'SK': 'PROFILE'
             },
-
-            UpdateExpression="set first_name=:f, last_name=:l, preferred_language=:p, username=:u, hashed_password=:hp",
-            ExpressionAttributeValues={
-                ':f': first_name,
-                ':l': last_name,
-                ':p': preferred_language,
-                ':u': username,
-                ':hp': hashed_password
-            },
+            UpdateExpression=update_expression,
+            ExpressionAttributeValues=expression_values,
             ReturnValues="UPDATED_NEW"
         )
         updated_attributes = response.get('Attributes', {})
@@ -178,7 +212,7 @@ def edit_user(event, context):
                     'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
                     'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
                 },
-                'body': json.dumps({'error': 'Set not found'})
+                'body': json.dumps({'error': 'User not found'})
             }
 
         updated_attributes.pop('hashed_password', None)
@@ -223,25 +257,25 @@ def delete_user(event, context):
                 },
                 'body': json.dumps({'error': 'User ID is required'})
             }
-        
-        logger.info(f"Attempting to delete user with ID: {user_id}")
 
-        response = table.delete_item(
-            Key = {
-                'PK': 'USER#' + user_id,
-                'SK': 'PROFILE'
-        },
-        ConditionExpression = "attribute_exists(PK) AND attribute_exists(SK)",
-        ReturnValues="ALL_OLD"
+        logger.info(f"Scanning for all items with PK = USER#{user_id} or PK starts with USER#{user_id}#")
+
+        # Scan for all PKs: exact match and those that begin with the prefix
+        response = table.scan(
+            FilterExpression=Attr('PK').eq(f'USER#{user_id}') | Attr('PK').begins_with(f'USER#{user_id}#')
         )
 
-        deleted_attributes = response.get('Attributes', {})
-        logger.info(f"User deleted successfully: {response}")
+        items = response.get('Items', [])
+        logger.info(f"Found {len(items)} items to delete for user {user_id}")
 
-        deleted_attributes.pop('hashed_password', None)
-        deleted_attributes.pop('SK', None)
-        deleted_attributes.pop('PK', None)
+        # Delete all matching items
+        for item in items:
+            pk = item['PK']
+            sk = item['SK']
+            logger.info(f"Deleting item with PK={pk}, SK={sk}")
+            table.delete_item(Key={'PK': pk, 'SK': sk})
 
+        logger.info(f"Successfully deleted {len(items)} items for user {user_id}")
         return {
             'statusCode': 200,
             'headers': {
@@ -250,8 +284,7 @@ def delete_user(event, context):
                 'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
             },
             'body': json.dumps({
-                'message': 'User deleted successfully',
-                'deleted_attributes': deleted_attributes
+                'message': f"Deleted {len(items)} items for user {user_id}"
             }, default=str)
         }
     except Exception as e:

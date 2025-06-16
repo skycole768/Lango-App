@@ -221,6 +221,17 @@ def get_flashcard(event, context):
         }
     
 def edit_flashcard(event, context):
+    if event['requestContext']['http']['method'] == 'OPTIONS':
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                'Access-Control-Allow-Headers': '*',
+            },
+            'body': json.dumps({'message': 'CORS preflight response'})
+        }
+    
     logger.info("Starting edit_flashcard handler")
 
     try:

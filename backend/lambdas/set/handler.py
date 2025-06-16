@@ -4,7 +4,7 @@ import os
 import logging
 import uuid
 import time
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 
 s3_client = boto3.client('s3')
 logger = logging.getLogger()
@@ -44,8 +44,8 @@ def add_set(event, context):
         
         logger.info(f"Received body: {body}")
         set_name = body.get('set_name')
-        set_description = body.get('set_description')
-        if not set_name or not set_description:
+        set_description = body.get('set_description', '')
+        if not set_name:
             return {
                 'statusCode': 400,
                 'headers': {
@@ -53,7 +53,7 @@ def add_set(event, context):
                     'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
                     'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
                 },
-                'body': json.dumps({'error': 'Set name and description are required'})
+                'body': json.dumps({'error': 'Set name are required'})
             }
         
         logger.info(f"Adding set: {set_name} for user: {user_id} in language: {language}")
@@ -217,6 +217,17 @@ def get_set(event, context):
         }
     
 def edit_set(event, context):
+    if event['requestContext']['http']['method'] == 'OPTIONS':
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
+                'Access-Control-Allow-Headers': '*',
+            },
+            'body': json.dumps({'message': 'CORS preflight response'})
+        }
+    
     logger.info("starting edit_set handler")
 
     try:
@@ -252,8 +263,8 @@ def edit_set(event, context):
             }
         
         set_name = body.get('set_name')
-        set_description = body.get('set_description')
-        if not set_name or not set_description:
+        set_description = body.get('set_description', '')
+        if not set_name:
             return {
                 'statusCode': 400,
                 'headers': {
@@ -337,15 +348,35 @@ def delete_set(event, context):
                 },
                 'body': json.dumps({'error': 'User ID, language, and set ID are required'})
             }
-        
-        logger.info(f"Deleting set for user_id: {user_id}, language: {language}, set_id: {set_id}")
-        response = table.delete_item(
-            Key={
-                'PK': f'USER#{user_id}#LANGUAGE#{language}',
-                'SK': f'SET#{set_id}'
-            }
+        items_to_delete = []
+
+        prefix = f"USER#{user_id}#LANGUAGE#{language}#SET#{set_id}"
+        logger.info(f"Scanning for items with PK starting with {prefix}")
+
+        # 1. Delete all flashcards and related items under this set
+        response1 = table.scan(
+            FilterExpression=Attr('PK').begins_with(prefix)
         )
-        logger.info(f"Set deleted successfully: {response}")
+        items_to_delete = response1.get('Items', [])
+
+        # 2. Delete the set metadata itself
+        logger.info(f"Scanning for set metadata with PK=USER#{user_id}#LANGUAGE#{language} and SK=SET#{set_id}")
+        response2 = table.scan(
+            FilterExpression=Attr('PK').eq(f'USER#{user_id}#LANGUAGE#{language}') & Attr('SK').eq(f'SET#{set_id}')
+        )
+        items_to_delete.extend(response2.get('Items', []))
+
+        logger.info(f"Found total {len(items_to_delete)} items to delete for set {set_id}")
+
+        # Delete all collected items
+        for item in items_to_delete:
+            pk = item['PK']
+            sk = item['SK']
+            logger.info(f"Deleting item with PK={pk}, SK={sk}")
+            table.delete_item(Key={'PK': pk, 'SK': sk})
+
+        logger.info(f"Successfully deleted {len(items_to_delete)} items for set {set_id} of user {user_id}")
+
         return {
             'statusCode': 200,
             'headers': {
@@ -353,7 +384,9 @@ def delete_set(event, context):
                 'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
                 'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
             },
-            'body': json.dumps({'message': 'Set deleted successfully'})
+            'body': json.dumps({
+                'message': f"Deleted {len(items_to_delete)} items for set {set_id} of user {user_id}"
+            })
         }
     except Exception as e:
         logger.error(f"Error in delete_set: {str(e)}")
