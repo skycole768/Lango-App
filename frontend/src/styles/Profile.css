@@ -1,0 +1,116 @@
+/* Container styles */
+.profile-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Inter', sans-serif;
+    color: #333;
+  }
+  
+  /* Heading */
+  .profile-container h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #268a8a;
+  }
+  
+  /* Label and input styles */
+  form label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  form input,
+  form select {
+    margin-top: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    transition: border-color 0.2s;
+  }
+  
+  form input:focus,
+  form select:focus {
+    border-color: #268a8a;
+    outline: none;
+  }
+  
+  /* Profile detail paragraph spacing */
+  .profile-details p {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+  
+  /* Action buttons container */
+  .profile-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+  
+  /* Common button styles */
+  .profile-button,
+  form button {
+    background-color: #268a8a;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  /* Hover effect */
+  .profile-button:hover,
+  form button:hover {
+    background-color: #1e6f6f;
+  }
+  
+  /* Delete button styling */
+  .profile-button.delete {
+    background-color: #d9534f;
+  }
+  
+  .profile-button.delete:hover {
+    background-color: #c9302c;
+  }
+  
+  /* Error message */
+  .error-message {
+    margin-top: 1.5rem;
+    color: #d9534f;
+    text-align: center;
+    font-weight: 600;
+  }
+  
+  /* Form submit/cancel buttons */
+  form button {
+    margin-right: 1rem;
+  }
+  
+  /* Responsive layout */
+  @media (max-width: 500px) {
+    .profile-actions {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  
+    form button {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 0.75rem;
+    }
+  }
+  

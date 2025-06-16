@@ -4,19 +4,50 @@ import '../styles/NavBar.css';
 
 function NavBar() {
     const navigate = useNavigate();
+    const [token, setToken] = useState(null);
     const [user, setUser] = useState(null);
+    const [userName, setUserName] = useState(null);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+        const storedUserId = localStorage.getItem('user_id');
+        const storedToken = localStorage.getItem('token');
+        if (storedToken) {
+            setUser(storedUserId);
+            setToken(storedToken);
+            fetchUser(storedUserId);
         }  
-    }, [navigate]);
+    }, []);
+
+    async function fetchUser(user_id) {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/getUser?user_id=${user_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            console.log("Response status:", response.status);
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch user_id: ${user_id} (status: ${response.status})`);
+            }
+
+            const data = await response.json();
+            setUserName(data.first_name || 'User');
+        } catch (error) {
+            console.error('Error fetching user:', error);
+        }
+    }
 
     const handleLogout = () => {
-        localStorage.removeItem('user');
+        localStorage.removeItem('user_id');
+        localStorage.removeItem('token');
         setUser(null);
+        setUserName(null);
         navigate('/');
+        window.location.reload();
     };
 
     return (
@@ -24,11 +55,20 @@ function NavBar() {
             <div className="navbar-brand" onClick={() => navigate('/')}>
                 Lango
             </div>
-            <div className="navbar-links">
-                {user ? (
+
+            <div className="navbar-hamburger" onClick={() => setMenuOpen(prev => !prev)}>
+                ☰
+            </div>
+
+            <div className={`navbar-links ${menuOpen ? 'active' : ''}`}> {/* ✅ */}
+                {token && userName ? (
                     <>
-                        <span className="navbar-user">Welcome, {user.name}</span>
-                        <button className="navbar-logout" onClick={handleLogout}>Logout</button>
+                        <span className="navbar-user-clickable" onClick={() => navigate('/profile')}>
+                            Welcome {userName}
+                        </span>
+                        <button className="navbar-logout" onClick={handleLogout}>
+                            Logout
+                        </button>
                     </>
                 ) : (
                     <>

@@ -1,0 +1,130 @@
+.edit-flashcard-container {
+    max-width: 700px;
+    color: #268a8a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #eaf5f5;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .edit-flashcard-container h2 {
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #4db6b6;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .edit-flashcard-container form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  
+  .edit-flashcard-container label {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #268a8a;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .edit-flashcard-container input[type="text"],
+  .edit-flashcard-container textarea {
+    margin-top: 0.3rem;
+    padding: 0.5rem 1rem;
+    border: 1.8px solid #4db6b6;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    resize: vertical;
+    transition: border-color 0.25s ease-in-out;
+    background-color: #fff;
+  }
+  
+  .edit-flashcard-container input[type="text"]:focus,
+  .edit-flashcard-container textarea:focus {
+    border-color: #268a8a;
+    outline: none;
+  }
+  
+  .edit-flashcard-container textarea {
+    min-height: 90px;
+    max-height: 160px;
+  }
+  
+  .edit-flashcard-container button {
+    background-color: #268a8a;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.65rem 0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: background-color 0.25s ease-in-out;
+  }
+  
+  .edit-flashcard-container button:disabled {
+    background-color: #7ac2c2;
+    cursor: not-allowed;
+  }
+  
+  .edit-flashcard-container button:not(:disabled):hover,
+  .edit-flashcard-container button:not(:disabled):focus {
+    background-color: #4db6b6;
+    outline: none;
+  }
+
+  .button-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.button-group button {
+  width: 180px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 2px solid #268a8a;
+  cursor: pointer;
+  background-color: #268a8a;
+  color: white;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.button-group button:disabled {
+  background-color: #ccc;
+  border-color: #bbb;
+  cursor: not-allowed;
+}
+
+.button-group .cancel-button, .button-group .submit-button {
+  background-color: white;
+  color: #268a8a;
+}
+
+.button-group button:hover:not(:disabled) {
+  background-color: #1d6f6f;
+  color: white;
+}
+
+  
+  .error-message {
+    color: #d32f2f;
+    margin-top: 1rem;
+    font-weight: 600;
+    text-align: center;
+  }
+  

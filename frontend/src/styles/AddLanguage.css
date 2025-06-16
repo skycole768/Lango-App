@@ -1,0 +1,72 @@
+.add-language-container {
+    max-width: 420px;
+    margin: 2rem auto;
+    padding: 2rem 2.5rem;
+    background-color: #f9fafb;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+  }
+  
+  .add-language-container h2 {
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    text-align: center;
+  }
+  
+  .add-language-container form label {
+    display: block;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #34495e;
+  }
+  
+  .add-language-container form select {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
+    font-family: inherit;
+    cursor: pointer;
+  }
+  
+  .add-language-container form select:focus {
+    border-color: #2563eb;
+    outline: none;
+  }
+  
+  .add-language-container form button {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 0.75rem 0;
+    background-color: #2563eb;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+  }
+  
+  .add-language-container form button:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+  }
+  
+  .add-language-container form button:hover:not(:disabled) {
+    background-color: #4db6b6;;
+  }
+  
+  .error-message {
+    margin-top: 1rem;
+    color: #e53e3e;
+    font-weight: 600;
+    text-align: center;
+  }
+  

@@ -1,0 +1,103 @@
+/* NavBar.css */
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    left: 0;
+    width: 100vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #fff;
+    border-bottom: 2px solid #268a8a;
+    box-shadow: 0 2px 4px rgba(38, 138, 138, 0.1);
+}
+  
+  .navbar-brand {
+    font-weight: 700;
+    font-size: 2rem;
+    color: #268a8a;
+    cursor: pointer;
+    user-select: none;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.05em;
+  }
+  
+  .navbar-links button {
+    background-color: #268a8a;
+    color: white;
+    border: none;
+    padding: 0.5em 1.2em;
+    margin-left: 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .navbar-links button:hover,
+  .navbar-links button:focus {
+    background-color: #4db6b6;
+    outline: none;
+  }
+  
+  .navbar-user-clickable {
+    font-weight: 600;
+    color: #268a8a;
+    margin-right: 1rem;
+    font-size: 1.5rem;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .navbar-user-clickable:hover {
+    color: #4db6b6; 
+    cursor: pointer;
+  }
+
+.navbar-hamburger {
+    display: none;
+    font-size: 2rem;
+    color: #268a8a;
+    cursor: pointer;
+}
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .navbar-hamburger {
+        display: block;
+    }
+
+    .navbar-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background-color: #fff;
+        border-left: 2px solid #268a8a;
+        border-bottom: 2px solid #268a8a;
+        width: 100%;
+        padding: 1rem 2rem;
+        box-shadow: 0 2px 8px rgba(38, 138, 138, 0.2);
+    }
+
+    .navbar-links.active {
+        display: flex;
+    }
+
+    .navbar-links button,
+    .navbar-user-clickable {
+        margin: 0.5rem 0;
+        width: 100%;
+        text-align: left;
+    }
+}

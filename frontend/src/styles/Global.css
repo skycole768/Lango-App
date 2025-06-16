@@ -1,0 +1,101 @@
+/* Global.css */
+
+/* Import a clean, modern font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+/* Reset some basics */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+    width: 100%;
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    color: #268a8a; /* Accent/Darker text */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Link styles */
+a {
+  color: #268a8a;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+a:hover,
+a:focus {
+  color: #4db6b6; /* Dark Variant */
+  outline: none;
+}
+
+/* Buttons */
+button {
+  background-color: #268a8a;
+  color: white;
+  border: none;
+  padding: 0.6em 1.2em;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button:hover,
+button:focus {
+  background-color: #4db6b6;
+  outline: none;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: #4db6b6;
+  font-weight: 600;
+  margin-bottom: 0.5em;
+}
+
+/* Paragraphs */
+p {
+  line-height: 1.6;
+  margin-bottom: 1em;
+}
+
+/* Container */
+.App {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* Form inputs */
+input, select, textarea {
+  padding: 0.5em;
+  border: 1px solid #84e1e1;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: #268a8a;
+  background-color: #e0f7f7;
+  transition: border-color 0.2s ease-in-out;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: #4db6b6;
+  outline: none;
+}
+
+/* Minimal scroll bar styling (optional) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4db6b6;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #b2ebeb;
+}

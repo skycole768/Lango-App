@@ -1,0 +1,96 @@
+.set-card {
+    width: 100%;
+    max-width: 320px; /* max card width */
+    min-height: 220px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(38, 138, 138, 0.12);
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    cursor: pointer;
+  }
+  
+  .set-card:hover,
+  .set-card:focus {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 18px rgba(38, 138, 138, 0.2);
+    outline: none;
+  }
+  
+  .set-card h3 {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: #268a8a;
+  }
+  
+  .set-card .description {
+    font-weight: 400;
+    font-size: 1rem;
+    color: #4db6b6;
+    line-height: 1.4;
+    max-height: 5.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 1rem;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center; /* Center buttons inside the container */
+    gap: 0.6rem;
+    margin-top: 1rem;
+  }
+  
+  .set-card button {
+    background-color: #268a8a;
+    color: white;
+    border: none;
+    padding: 0.4em 1em;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .set-card button:hover,
+  .set-card button:focus {
+    background-color: #4db6b6;
+    outline: none;
+  }
+
+  @media (max-width: 768px) {
+    .set-card {
+      max-width: 100%;
+      padding: 1rem;
+      min-height: auto;
+    }
+  
+    .set-card h3 {
+      font-size: 1.1rem;
+    }
+  
+    .set-card .description {
+      font-size: 0.95rem;
+      max-height: none;
+    }
+  
+    .button-container {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.5rem;
+    }
+  
+    .set-card button {
+      width: 100%;
+      font-size: 1rem;
+      padding: 0.6em 1em;
+    }
+  }
+  
+  

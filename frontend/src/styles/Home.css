@@ -1,0 +1,112 @@
+/* Home.css */
+
+.home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;  /* horizontal center */
+    justify-content: center; /* vertical center */
+    min-height: 50vh;    /* full viewport height */
+    min-width: 50vw;
+    margin: 2rem auto;
+    font-family: 'Inter', sans-serif;
+    color: #268a8a;
+    background-color: #ffffff;
+    border: 1px solid #d0f0f0;
+    padding: 2.5rem 3rem;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+  }
+  
+  .home-container h1 {
+    font-weight: 700;
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+    color: #4db6b6; /* Dark variant */
+    letter-spacing: 0.03em;
+  }
+
+  .intro-text {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #4db6b6;
+    text-align: center;
+  }
+  
+  .language-list h2 {
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #4db6b6;
+  }
+  
+  .language-list button {
+    background-color: #268a8a;
+    color: white;
+    border: none;
+    padding: 0.5em 1.2em;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 1.5rem;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .language-list button:hover,
+  .language-list button:focus {
+    background-color: #4db6b6;
+    outline: none;
+  }
+
+  .language-list {
+    display: flex;
+    flex-direction: column; /* Stack vertically */
+    align-items: center;    /* Center horizontally */
+    justify-content: flex-start; /* Align from top */
+    gap: 1rem;              /* Space between cards */
+    margin-top: 1rem;
+    width: 100%;            /* Take full width */
+    max-width: 600px;       /* Optional: constrain max width */
+    margin-left: auto;      /* Center container horizontally */
+    margin-right: auto;
+  }
+  
+  .language-list p {
+    font-style: italic;
+    color: #4db6b6;
+  }
+  
+  .login-prompt {
+    text-align: center;
+    margin-top: 3rem;
+    color: #268a8a;
+  }
+  
+  .login-prompt p {
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  
+  .login-prompt button {
+    background-color: #268a8a;
+    color: white;
+    border: none;
+    padding: 0.6em 1.5em;
+    margin: 0 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    min-width: 100px;
+    width: 10vw;
+    height: 5vh;
+  }
+  
+  .login-prompt button:hover,
+  .login-prompt button:focus {
+    background-color: #4db6b6;
+    outline: none;
+  }
+  
+  

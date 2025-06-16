@@ -8,24 +8,24 @@ function isValidEmail(email) {
 }
 
 function isValidPassword(password) {
-    // Example: at least 8 characters, 1 number, 1 uppercase letter
-    const regex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+={}[\]|\\:;"'<>,.?/~`]).{8,}$/;
     return regex.test(password);
 }
 
+
 function Signup() {
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [preferredLanguage, setPreferredLanguage] = useState('');
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        const storedUser = localStorage.getItem('user');
+        const storedUser = localStorage.getItem('user_id');
         if (storedUser) {
-            setUser(JSON.parse(storedUser));
+           navigate('/');
         }  
     }, [navigate]);
 
@@ -61,15 +61,24 @@ function Signup() {
             },
             body: JSON.stringify(userData),
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+              return response.json().then(err => {
+                // Throw detailed error from server if available
+                throw new Error(err.error || 'Signup failed.');
+              });
+            }
+            return response.json();
+          })
         .then(data => {
-            localStorage.setItem('user', JSON.stringify(data.user));
-            localStorage.setItem('token', JSON.stringify(data.token));
+            localStorage.setItem('user_id', data.user_id);
+            localStorage.setItem('token', data.token);
             navigate('/');
+            window.location.reload();
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('Signup failed. Please try again.');
+            setError(error.message);
         });
     };
 
@@ -118,6 +127,7 @@ function Signup() {
                 <option value="Russian">Russian</option>
                 <option value="Italian">Italian</option>
             </select>
+            {error && <p className="error">{error}</p>}
             <button onClick={handleSignup}>Sign Up</button>
             <p className="login-link">
                 Already have an account? <span onClick={() => navigate('/login')}>Login</span>

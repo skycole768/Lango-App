@@ -1,0 +1,76 @@
+.add-set-container {
+    max-width: 480px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    
+  }
+  
+  .add-set-container h2 {
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    text-align: center;
+  }
+  
+  .add-set-container form label {
+    display: block;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #34495e;
+  }
+  
+  .add-set-container form input[type="text"],
+  .add-set-container form textarea {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    background-color: #fff;
+    border: 1.5px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    resize: vertical;
+    font-family: inherit;
+  }
+  
+  .add-set-container form input[type="text"]:focus,
+  .add-set-container form textarea:focus {
+    border-color: #2563eb; /* blue-600 */
+    outline: none;
+  }
+  
+  .add-set-container form button {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 0.75rem 0;
+    background-color: #2563eb; /* blue-600 */
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+  }
+  
+  .add-set-container form button:disabled {
+    background-color: #94a3b8; /* gray-400 */
+    cursor: not-allowed;
+  }
+  
+  .add-set-container form button:hover:not(:disabled) {
+    background-color: #1e40af; /* blue-800 */
+  }
+  
+  .error-message {
+    margin-top: 1rem;
+    color: #e53e3e; /* red-600 */
+    font-weight: 600;
+    text-align: center;
+  }
+  

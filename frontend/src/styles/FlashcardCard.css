@@ -1,0 +1,130 @@
+.flashcard-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  width: 500px;
+}
+
+
+.flashcard {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(38, 138, 138, 0.1);
+  cursor: pointer;
+  perspective: 1000px;
+  width: 100%;
+  max-width: 600px;
+  height: 180px;
+  position: relative;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flashcard-front,
+.flashcard-back {
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: inherit;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 3rem 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #268a8a;
+  font-family: 'Inter', sans-serif;
+}
+
+.flashcard-front {
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+
+.flashcard.flipped .flashcard-front {
+  transform: rotateY(180deg);
+  z-index: 1;
+}
+
+.flashcard.flipped .flashcard-back {
+  transform: rotateY(0deg);
+  z-index: 2;
+}
+
+/* New buttons below the card */
+.flashcard-action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.flashcard-action-buttons button {
+  background-color: #268a8a;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.4rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.flashcard-action-buttons button:hover,
+.flashcard-action-buttons button:focus {
+  background-color: #4db6b6;
+  outline: none;
+}
+
+@media (max-width: 768px) {
+  .flashcard-wrapper {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 1rem;
+  }
+
+  .flashcard {
+    height: auto;
+    min-height: 200px;
+    padding: 1rem;
+  }
+
+  .flashcard-front,
+  .flashcard-back {
+    padding: 2rem 1rem;
+  }
+
+  .flashcard h1 {
+    font-size: 1.4rem;
+  }
+
+  .flashcard h3 {
+    font-size: 1rem;
+  }
+
+  .flashcard-action-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .flashcard-action-buttons button {
+    width: 100%;
+    font-size: 1rem;
+  }
+}
+
+

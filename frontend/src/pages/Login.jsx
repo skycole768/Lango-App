@@ -8,13 +8,6 @@ function Login(){
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            navigate('/');
-        }
-    }, [navigate]);
-
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
@@ -31,10 +24,13 @@ function Login(){
             }
 
             const data = await response.json();
-            localStorage.setItem('user', JSON.stringify(data));
+            localStorage.setItem('user_id', data.user_id);
+            localStorage.setItem('token', data.token);
             navigate('/');
+            window.location.reload();
         } catch (err) {
-            setError(err.message);
+            console.error('Error:', err);
+            setError("Invalid username or password.");
         }
     };
 

@@ -1,0 +1,74 @@
+.language-card {
+    background-color: #b2ebeb;
+    border: 1.5px solid #84e1e1;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    text-align: center;
+    color: #268a8a;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 3px 10px rgba(38, 138, 138, 0.15);
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  
+  .language-card:hover {
+    background-color: #84e1e1;
+    color: white;
+    box-shadow: 0 6px 14px rgba(38, 138, 138, 0.3);
+  }
+  
+  .language-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .language-card h1 {
+    margin: 0 0 1.2rem 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    user-select: none;
+  }
+  
+  .language-card .delete-button {
+    background-color: transparent;
+    border: 1.5px solid #268a8a;
+    color: #268a8a;
+    font-weight: 600;
+    padding: 0.45rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-size: 0.95rem;
+    user-select: none;
+  }
+  
+  .language-card .delete-button:hover,
+  .language-card .delete-button:focus {
+    background-color: #268a8a;
+    color: white;
+    outline: none;
+  }
+
+  @media (max-width: 768px) {
+    .language-card {
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .language-card h1 {
+    font-size: 1.2rem;
+  }
+
+  .language-card .delete-button {
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
+  }
+
+  .language-content {
+    gap: 0.5rem;
+  }
+}
