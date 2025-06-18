@@ -6,7 +6,6 @@ import '../styles/Set.css';
 function Set() {
     const { language_id } = useParams();
     const [sets, setSets] = useState(null);
-    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
@@ -40,8 +39,6 @@ function Set() {
                 setSets(data.sets);
             } catch (err) {
                 setError(err.message);
-            } finally {
-                setLoading(false);
             }
         };
 
@@ -72,9 +69,6 @@ function Set() {
         }
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
     if (error) {
         return <div>Error: {error}</div>;
     }

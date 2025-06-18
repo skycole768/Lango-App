@@ -102,7 +102,6 @@ function Profile() {
       setEditMode(false);
       setFormData({ ...formData, password: '' });
 
-      window.location.reload();
     } catch (err) {
       console.error(err);
       setError('Could not update profile.');

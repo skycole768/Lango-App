@@ -7,7 +7,6 @@ function Home() {
     const navigate = useNavigate();
     const [languages, setLanguages] = useState([]);
     const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [user,setUser ] = useState(null);
     const [token, setToken] = useState(null);
       
@@ -43,9 +42,6 @@ function Home() {
                 console.error('Error fetching languages:', error);
                 setError('Failed to load languages');
             }
-            finally {
-                setLoading(false);
-            }
         }
         fetchLanguages();
     }
@@ -79,11 +75,6 @@ function Home() {
         navigate('/add-language');
     }
 
-    if (loading) {
-        if(token){
-            return <div>Loading...</div>;
-        }
-    }
     if (error) {
         return <div>Error: {error}</div>;
     }

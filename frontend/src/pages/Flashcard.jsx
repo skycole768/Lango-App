@@ -7,7 +7,6 @@ function Flashcard() {
   const [flashcards, setFlashcards] = useState([]);
   const navigate = useNavigate();
   const { set_id, language_id } = useParams();
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -39,8 +38,6 @@ function Flashcard() {
           } catch (error) {
               console.error('Error fetching flashcards:', error);
               setError('Failed to load flashcards');
-          } finally {
-              setLoading(false);
           }
       };
       fetchFlashcards();
@@ -73,9 +70,6 @@ function Flashcard() {
     }
   }
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
   if (error) {
       return <div>Error: {error}</div>;
   }
