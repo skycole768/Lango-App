@@ -26,26 +26,31 @@ Hey! This is Lango, a language flashcard app I built to help me (and hopefully y
   
   bash
   Copy code
-  python -m venv venv
-  source venv/bin/activate   # on macOS/Linux  
-  venv\Scripts\activate      # on Windows
-  Install dependencies:
   
-    bash
-    Copy code
+    python -m venv venv
+    source venv/bin/activate   # on macOS/Linux  
+    venv\Scripts\activate      # on Windows
+    Install dependencies:
+  
+  bash
+  Copy code
+  
     pip install -r requirements.txt
+    
   Run tests:
   
-    bash
-    Copy code
+  bash
+  Copy code
+  
     pytest tests --maxfail=1 --disable-warnings -q
     Frontend
     Go to frontend/ folder
   
   Run:
   
-    bash
-    Copy code
+  bash
+  Copy code
+  
     npm install
     npm run dev
   
