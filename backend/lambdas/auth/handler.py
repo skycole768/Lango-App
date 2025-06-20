@@ -142,7 +142,7 @@ def signup(event, context):
                 'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
             }, 
             'body': json.dumps({
-                'message': 'User created sucessfully',
+                'message': 'User created successfully',
                 'user_id': user_id,
                 'token': jwt_token,
         })
@@ -254,7 +254,7 @@ def login(event, context):
                 'Access-Control-Allow-Headers': '*, Content-Type, Authorization',
             },
             'body': json.dumps({
-                'message': "Login Sucessful",
+                'message': "Login Successful",
                 'user_id': user_id,
                 'token': jwt_token
             },default=str)
