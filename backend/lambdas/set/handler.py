@@ -9,7 +9,8 @@ from boto3.dynamodb.conditions import Key, Attr
 s3_client = boto3.client('s3')
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-dynamodb = boto3.resource('dynamodb')
+region = os.getenv('AWS_REGION', 'us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name=region)
 table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
 
 def add_set(event, context):

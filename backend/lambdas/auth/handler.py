@@ -13,9 +13,10 @@ s3_client = boto3.client('s3')
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
+region = os.getenv('AWS_REGION', 'us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name=region)
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
-
 
 def hash_password(password):
     if (len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'\d', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password)):
