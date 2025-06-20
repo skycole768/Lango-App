@@ -14,8 +14,6 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 region = os.getenv('AWS_REGION', 'us-east-1')
-dynamodb = boto3.resource('dynamodb', region_name=region)
-table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
 
 def hash_password(password):
     if (len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'\d', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password)):
@@ -39,6 +37,9 @@ def generate_jwt(user_id, username):
 
 def signup(event, context):
     logger.info("Starting signup handler")
+
+    dynamodb = boto3.resource('dynamodb', region_name=region)
+    table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
 
     try:
         body = json.loads(event['body'])
@@ -161,6 +162,9 @@ def signup(event, context):
     
 def login(event, context):
     logger.info("Starting login handler")
+
+    dynamodb = boto3.resource('dynamodb', region_name=region)
+    table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
     try:
         body = json.loads(event['body'])
         if not body:
