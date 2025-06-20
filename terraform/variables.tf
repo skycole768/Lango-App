@@ -43,3 +43,26 @@ variable "jwt_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "lambda_names" {
+  default = [
+    "add_flashcard",
+    "edit_flashcard",
+    "delete_flashcard",
+    "get_flashcards",
+    "get_flashcard",
+    "add_set",
+    "edit_set",
+    "delete_set",
+    "get_sets",
+    "get_set",
+    "add_language",
+    "delete_language",
+    "get_languages",
+    "delete_user",
+    "edit_user",
+    "get_user",
+    "signup",
+    "login"
+  ]
+}
