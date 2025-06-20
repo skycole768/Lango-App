@@ -7,12 +7,12 @@ from boto3.dynamodb.conditions import Key, Attr
 s3_client = boto3.client('s3')
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-region = os.getenv('AWS_REGION', 'us-east-1')
-dynamodb = boto3.resource('dynamodb', region_name=region)
-table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
 
 def add_language(event, context):
     logger.info("Starting add_language handler")
+
+    dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"])
+    table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
 
     try:
         user_id = event['queryStringParameters']['user_id']
@@ -105,6 +105,9 @@ def add_language(event, context):
 def get_languages(event, context):
     logger.info("Starting get_languages handler")
 
+    dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"])
+    table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
+
     try:
         user_id = event['queryStringParameters']['user_id']
         logger.info(f"Received user_id: {user_id}")
@@ -159,6 +162,9 @@ def get_languages(event, context):
     
 def delete_language(event, context):
     logger.info("starting delete_language handler")
+
+    dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"])
+    table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
 
     try:
         user_id = event['queryStringParameters']['user_id']

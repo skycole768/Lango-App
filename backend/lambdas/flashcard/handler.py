@@ -9,12 +9,12 @@ from boto3.dynamodb.conditions import Key
 s3_client = boto3.client('s3')
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-region = os.getenv('AWS_REGION', 'us-east-1')
-dynamodb = boto3.resource('dynamodb', region_name=region)
-table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
 
 def add_flashcard(event, context):
     logger.info("Starting add_flashcard handler")
+
+    dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"])
+    table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
 
     try:
         user_id = event['queryStringParameters']['user_id']
@@ -88,6 +88,9 @@ def add_flashcard(event, context):
 def get_flashcards(event, context):
     logger.info("Starting get_flashcards handler")
 
+    dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"])
+    table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
+
     try:
         user_id = event['queryStringParameters']['user_id']
         language = event['queryStringParameters']['language']
@@ -149,6 +152,9 @@ def get_flashcards(event, context):
     
 def get_flashcard(event, context):
     logger.info("Starting get_flashcard handler")
+
+    dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"])
+    table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
 
     try:
         user_id = event['queryStringParameters']['user_id']
@@ -234,6 +240,9 @@ def edit_flashcard(event, context):
         }
     
     logger.info("Starting edit_flashcard handler")
+
+    dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"])
+    table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
 
     try:
         user_id = event['queryStringParameters']['user_id']
@@ -351,6 +360,9 @@ def edit_flashcard(event, context):
     
 def delete_flashcard(event, context):
     logger.info("Starting delete_flashcard handler")
+
+    dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"])
+    table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
 
     try:
         user_id = event['queryStringParameters']['user_id']

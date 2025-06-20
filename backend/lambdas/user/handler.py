@@ -10,10 +10,6 @@ s3_client = boto3.client('s3')
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-region = os.getenv('AWS_REGION', 'us-east-1')
-dynamodb = boto3.resource('dynamodb', region_name=region)
-table = dynamodb.Table(os.environ['DYNAMODB_TABLE_NAME'])
-
 def hash_password(password):
     if (len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'\d', password) or not re.search(r'[!@#$%^&*(),.?":{}|<>]', password)):
         raise ValueError("Password must be at least 8 characters long, contain an uppercase letter, a number, and a special character")
@@ -24,6 +20,9 @@ def hash_password(password):
 
 def get_user(event, context):
     logger.info("starting get_user handler")
+
+    dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"])
+    table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
 
     try:
         user_id = event['queryStringParameters']['user_id']
@@ -115,6 +114,9 @@ def edit_user(event, context):
         }
     
     logger.info("starting edit_user handler")
+
+    dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"])
+    table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
 
     try:
         body = json.loads(event['body'])
@@ -245,6 +247,10 @@ def edit_user(event, context):
 
 def delete_user(event, context):        
     logger.info("starting delete_user handler")
+
+    dynamodb = boto3.resource("dynamodb", region_name=os.environ["AWS_REGION"])
+    table = dynamodb.Table(os.environ["DYNAMODB_TABLE_NAME"])
+    
     try:
         user_id = event['queryStringParameters']['user_id']
         logger.info(f"Recieved user_id: {user_id}")
