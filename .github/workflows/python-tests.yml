@@ -31,4 +31,4 @@ jobs:
         DYNAMODB_TABLE_NAME: LangoApp
         JWT_SECRET: testsecret
       run: |
-        pytest tests --maxfail=1 --disable-warnings -q
+        pytest backend/tests --maxfail=1 --disable-warnings -q
